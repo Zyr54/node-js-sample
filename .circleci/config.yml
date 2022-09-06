@@ -2,14 +2,13 @@ version: 2.1
 executors: 
   docker-publisher:
     environment:
-      IMAGE_TAG: zyr54/tp_node_docker_circleci:latest
+      IMAGE_TAG: zyr54/tp_node_docker_circleci
     docker: 
-      - image: docker:stable
+      - image: circleci/buildpack-deps:stretch
 
 jobs:
   build_docker:
-    docker:
-      - image: cimg/base:2022.05
+    executor: docker-publisher
     steps:
       - checkout
       - setup_remote_docker
@@ -24,20 +23,26 @@ jobs:
             - ./image.tar
 
   push_docker:
-    docker:
-      - image: cimg/base:2022.05
+    executor: docker-publisher
     steps:
-      - setup_remote_docker
       - attach_workspace:
-          at: /app
-      - run: docker load --input /app/image.tar
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run: docker load -i /tmp/workspace/image.tar
       - run: echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
-      - run: docker push node_example
+      - run: docker push node_example:latest
 
 workflows:
+  version: 2
   launching:
     jobs:
-      - build_docker
+      - build_docker:
+          filters:
+              branches:
+                only: master
       - push_docker:
           requires:
             - build_docker
+          filters:
+            branches:
+              only: master
