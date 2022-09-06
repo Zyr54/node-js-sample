@@ -1,7 +1,7 @@
 version: 2.1
 executors: 
   docker-publisher: tp_node_docker_circleci
-    environnement: 
+    environment: 
       IMAGE_TAG: zyr54/tp_node_docker_circleci:latest
     docker: 
       - image: docker:stable
