@@ -8,7 +8,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build . -t node_example
-      - run: docker run --name node_ex -u node_ex -p 8080:8080 --network="host" -i node_example node_ex.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+      - run: docker run --name node_ex -p 8080:8080 --network="host" -i node_example node_ex.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
       - run: CONTAINER_HOST_IP=$(echo $DOCKER_HOST | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b")
       - run: curl http://$CONTAINER_HOST_IP:8080/JSON/core/view/version/?node_exapiformat=JSON | grep ‘version’
 
