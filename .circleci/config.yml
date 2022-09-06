@@ -17,6 +17,7 @@ jobs:
       - run: |
           docker run -d --name node_example node_example
           docker run --network container:node_example appropriate/curl --retry 10 --retry-connrefused http://localhost:8080
+      - run: docker save -o image.tar node_example
       - persist_to_workspace:
           root: .
           paths: 
