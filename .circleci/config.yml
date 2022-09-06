@@ -8,7 +8,6 @@ executors:
 
 jobs:
   build_docker:
-    executor: docker-publisher
     docker:
       - image: cimg/base:2022.05
     steps:
@@ -25,7 +24,6 @@ jobs:
             - ./image.tar
 
   push_docker:
-    executor: docker-publisher
     docker:
       - image: cimg/base:2022.05
     steps:
@@ -34,7 +32,7 @@ jobs:
           at: /app
       - run: docker load --input /app/image.tar
       - run: echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
-      - run: docker push "${IMAGE_TAG}"
+      - run: docker push node_example
 
 workflows:
   launching:
