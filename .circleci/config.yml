@@ -1,0 +1,13 @@
+version: 2.1
+
+jobs:
+  run_docker:
+    docker:
+      - image: cimg/base:2022.05
+    steps:
+      - run: docker run -p 8080:8080 node_example
+
+workflows:
+  launching:
+    jobs:
+      - run_docker
