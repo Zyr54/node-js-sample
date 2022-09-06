@@ -5,9 +5,10 @@ executors:
       IMAGE_TAG: zyr54/tp_node_docker_circleci:latest
     docker: 
       - image: docker:stable
+
 jobs:
   build_docker:
-    executors: docker-publisher
+    executor: docker-publisher
     docker:
       - image: cimg/base:2022.05
     steps:
@@ -24,11 +25,13 @@ jobs:
             - ./image.tar
 
   push_docker:
-    executors: docker-publisher
+    executor: docker-publisher
+    docker:
+      - image: cimg/base:2022.05
     steps:
       - setup_remote_docker
       - attach_workspace:
-        at: /tmp/workspace
+          at: /tmp/workspace
       - run: docker load --input /tmp/workspace/image.tar
       - run: echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
       - run: docker push "${IMAGE_TAG}"
@@ -37,4 +40,4 @@ workflows:
   launching:
     jobs:
       - build_docker
-      - push
+      - push_docker
