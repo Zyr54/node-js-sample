@@ -30,9 +30,8 @@ jobs:
       - attach_workspace:
         at: /tmp/workspace
       - run: docker load --input /tmp/workspace/image.tar
-      - run: |
-        echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
-        docker push "${IMAGE_TAG}"
+      - run: echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
+      - run: docker push "${IMAGE_TAG}"
 
 workflows:
   launching:
