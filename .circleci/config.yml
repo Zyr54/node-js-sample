@@ -31,8 +31,8 @@ jobs:
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: /tmp/workspace
-      - run: docker load --input /tmp/workspace/image.tar
+          at: /app
+      - run: docker load --input /app/image.tar
       - run: echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
       - run: docker push "${IMAGE_TAG}"
 
@@ -40,4 +40,6 @@ workflows:
   launching:
     jobs:
       - build_docker
-      - push_docker
+      - push_docker:
+          requires:
+            - build_docker
