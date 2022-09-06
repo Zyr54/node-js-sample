@@ -1,7 +1,13 @@
 version: 2.1
-
+executors: 
+  docker-publisher: tp_node_docker_circleci
+    environnement: 
+      IMAGE_TAG: zyr54/tp_node_docker_circleci:latest
+    docker: 
+      - image: docker:stable
 jobs:
   build_docker:
+    executors: docker-publisher
     docker:
       - image: cimg/base:2022.05
     steps:
@@ -12,8 +18,29 @@ jobs:
       - run: |
           docker run -d --name node_example node_example
           docker run --network container:node_example appropriate/curl --retry 10 --retry-connrefused http://localhost:8080
+      - persist_to_workspace:
+          root: .
+          paths: 
+            - ./image.tar
+
+  push_docker:
+    executors: docker-publisher
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+        at: /tmp/workspace
+      - run: docker load --input /tmp/workspace/image.tar
+      - run: |
+        echo "${DOCKERHUB_PASS}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
+        docker push "${IMAGE_TAG}"
 
 workflows:
   launching:
     jobs:
       - build_docker
+      - push:
+        requires:
+          - build
+        filters:
+          branches:
+            only: main
