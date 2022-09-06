@@ -37,6 +37,4 @@ workflows:
   launching:
     jobs:
       - build_docker
-      - push:
-        requires:
-          - build
+      - push
