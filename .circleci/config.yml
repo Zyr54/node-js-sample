@@ -7,7 +7,9 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker build . -t node_example
+      - run: |
+          docker build . -t node_example
+          docker build appropriate/curl -t appropriate/curl
       - run: |
           docker run -d --name node_example node_example
           docker run --network node_example appropriate/curl --retry 10 --retry-connrefused http://localhost:8080
