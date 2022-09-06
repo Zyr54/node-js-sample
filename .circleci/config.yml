@@ -1,15 +1,14 @@
 version: 2.1
 
 jobs:
-  run_docker:
+  build_docker:
     docker:
       - image: cimg/base:2022.05
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker run -p 8080:8080 node_example
-
+      - run: docker build . -t node_example
 workflows:
   launching:
     jobs:
-      - run_docker
+      - build_docker
